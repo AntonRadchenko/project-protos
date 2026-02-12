@@ -1,0 +1,42 @@
+syntax = "proto3";
+package task;
+option go_package = "github.com/AntonRadchenko/project-protos/proto/task";
+
+import "google/protobuf/empty.proto";
+
+message Task {
+    uint32 id = 1;
+    string task = 2;
+    optional bool is_done = 3;
+    uint32 user_id = 4;
+}
+
+message CreateTaskRequest {
+    string task = 1;
+    optional bool is_done = 2;
+    uint32 user_id = 3;
+}
+
+message UpdateTaskRequest {
+    uint32 id = 1;
+    optional string task = 2;
+    optional bool is_done = 3;
+    optional uint32 user_id = 4;
+}
+
+message DeleteTaskRequest {
+    uint32 id = 1;
+}
+
+// Описание всех методов сервиса Tasks
+// Каждый rpc соответствует методу в taskService/service.go
+service TaskService {
+    // CreateTask(params CreateTaskParams) (*Task, error)
+    rpc CreateTask(CreateTaskRequest) returns (Task);
+    // GetTasks() ([]Task, error)
+    rpc ListTasks(google.protobuf.Empty) returns (stream Task);
+    // UpdateTask(id uint, params UpdateTaskParams) (*Task, error)
+    rpc UpdateTask(UpdateTaskRequest) returns (Task);
+    // DeleteTask(id uint) error
+    rpc DeleteTask(DeleteTaskRequest) returns (google.protobuf.Empty);
+}

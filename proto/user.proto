@@ -1,0 +1,51 @@
+syntax = "proto3";
+package user;
+option go_package = "github.com/AntonRadchenko/project-protos/proto/user";
+
+import "google/protobuf/empty.proto";
+import "proto/task.proto";  // Для возврата Task в GetUserTasks
+
+// Бизнес-модель User из userService/service.go
+message User {
+  uint32 id = 1;      
+  string email = 2;   
+}
+
+message CreateUserRequest {
+  string email = 1;     
+  string password = 2;  
+}
+
+message UpdateUserRequest {
+  uint32 id = 1;          
+  // optional - вместо указателей       
+  optional string email = 2;    
+  optional string password = 3;  
+}
+
+message DeleteUserRequest {
+  uint32 id = 1;  
+}
+
+message GetUserTasksRequest {
+  uint32 user_id = 1;  // Из аргумента userID метода GetTasksForUser
+}
+
+// Описание всех методов сервиса Users
+service UserService {
+  // CreateUser(CreateUserParams) (*User, error)
+  rpc CreateUser(CreateUserRequest) returns (User);
+  
+  // GetUsers() ([]User, error) 
+  // stream User = массив/список    
+  rpc GetUsers(google.protobuf.Empty) returns (stream User);
+  
+  // UpdateUser(id uint, params UpdateUserParams) (*User, error)
+  rpc UpdateUser(UpdateUserRequest) returns (User);
+  
+  // DeleteUser(id uint) error
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
+  
+  // GetTasksForUser(userID uint) ([]taskService.Task, error)
+  rpc GetUserTasks(GetUserTasksRequest) returns (stream task.Task);
+}
