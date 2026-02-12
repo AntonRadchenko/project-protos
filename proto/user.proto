@@ -16,6 +16,10 @@ message CreateUserRequest {
   string password = 2;  
 }
 
+message GetUserRequest {
+  uint32 id = 1;
+}
+
 message UpdateUserRequest {
   uint32 id = 1;          
   // optional - вместо указателей       
@@ -35,10 +39,13 @@ message GetUserTasksRequest {
 service UserService {
   // CreateUser(CreateUserParams) (*User, error)
   rpc CreateUser(CreateUserRequest) returns (User);
+
+  // GetUser(id uint) (*User, error)  ← ЭТО НОВЫЙ
+  rpc GetUser(GetUserRequest) returns (User);
   
   // GetUsers() ([]User, error) 
   // stream User = массив/список    
-  rpc GetUsers(google.protobuf.Empty) returns (stream User);
+  rpc ListUsers(google.protobuf.Empty) returns (stream User);
   
   // UpdateUser(id uint, params UpdateUserParams) (*User, error)
   rpc UpdateUser(UpdateUserRequest) returns (User);
