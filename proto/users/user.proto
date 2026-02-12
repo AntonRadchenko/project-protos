@@ -3,7 +3,7 @@ package user;
 option go_package = "github.com/AntonRadchenko/project-protos/proto/user";
 
 import "google/protobuf/empty.proto";
-import "proto/task.proto";  // Для возврата Task в GetUserTasks
+import "proto/tasks/task.proto";;  // Для возврата Task в GetUserTasks
 
 // Бизнес-модель User из userService/service.go
 message User {
