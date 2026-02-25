@@ -3,8 +3,8 @@ OUT_DIR := .
 
 generate:
 	protoc \
-		--go_out=$(OUT_DIR) --go_opt=paths=source_relative \
-		--go-grpc_out=$(OUT_DIR) --go-grpc_opt=paths=source_relative \
+		--go_out=$(OUT_DIR) --go_opt=module=github.com/AntonRadchenko/project-protos \
+		--go-grpc_out=$(OUT_DIR) --go-grpc_opt=module=github.com/AntonRadchenko/project-protos \
 		$(PROTOS)
 
 clean:
