@@ -31,10 +31,6 @@ message DeleteUserRequest {
   uint32 id = 1;  
 }
 
-message GetUserTasksRequest {
-  uint32 user_id = 1;  // Из аргумента userID метода GetTasksForUser
-}
-
 // Описание всех методов сервиса Users
 service UserService {
   // CreateUser(CreateUserParams) (*User, error)
@@ -52,8 +48,4 @@ service UserService {
   
   // DeleteUser(id uint) error
   rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
-  
-  // GetTasksForUser(userID uint) ([]taskService.Task, error)
-  rpc GetUserTasks(GetUserTasksRequest) returns (stream task.Task);
 }
-

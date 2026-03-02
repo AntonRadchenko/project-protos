@@ -8,7 +8,6 @@ package user
 
 import (
 	context "context"
-	task "github.com/AntonRadchenko/project-protos/proto/task"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -21,12 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_CreateUser_FullMethodName   = "/user.UserService/CreateUser"
-	UserService_GetUser_FullMethodName      = "/user.UserService/GetUser"
-	UserService_ListUsers_FullMethodName    = "/user.UserService/ListUsers"
-	UserService_UpdateUser_FullMethodName   = "/user.UserService/UpdateUser"
-	UserService_DeleteUser_FullMethodName   = "/user.UserService/DeleteUser"
-	UserService_GetUserTasks_FullMethodName = "/user.UserService/GetUserTasks"
+	UserService_CreateUser_FullMethodName = "/user.UserService/CreateUser"
+	UserService_GetUser_FullMethodName    = "/user.UserService/GetUser"
+	UserService_ListUsers_FullMethodName  = "/user.UserService/ListUsers"
+	UserService_UpdateUser_FullMethodName = "/user.UserService/UpdateUser"
+	UserService_DeleteUser_FullMethodName = "/user.UserService/DeleteUser"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -46,8 +44,6 @@ type UserServiceClient interface {
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
 	// DeleteUser(id uint) error
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// GetTasksForUser(userID uint) ([]taskService.Task, error)
-	GetUserTasks(ctx context.Context, in *GetUserTasksRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[task.Task], error)
 }
 
 type userServiceClient struct {
@@ -117,25 +113,6 @@ func (c *userServiceClient) DeleteUser(ctx context.Context, in *DeleteUserReques
 	return out, nil
 }
 
-func (c *userServiceClient) GetUserTasks(ctx context.Context, in *GetUserTasksRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[task.Task], error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[1], UserService_GetUserTasks_FullMethodName, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &grpc.GenericClientStream[GetUserTasksRequest, task.Task]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type UserService_GetUserTasksClient = grpc.ServerStreamingClient[task.Task]
-
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -153,8 +130,6 @@ type UserServiceServer interface {
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
 	// DeleteUser(id uint) error
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
-	// GetTasksForUser(userID uint) ([]taskService.Task, error)
-	GetUserTasks(*GetUserTasksRequest, grpc.ServerStreamingServer[task.Task]) error
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -179,9 +154,6 @@ func (UnimplementedUserServiceServer) UpdateUser(context.Context, *UpdateUserReq
 }
 func (UnimplementedUserServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteUser not implemented")
-}
-func (UnimplementedUserServiceServer) GetUserTasks(*GetUserTasksRequest, grpc.ServerStreamingServer[task.Task]) error {
-	return status.Error(codes.Unimplemented, "method GetUserTasks not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -287,17 +259,6 @@ func _UserService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GetUserTasks_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(GetUserTasksRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(UserServiceServer).GetUserTasks(m, &grpc.GenericServerStream[GetUserTasksRequest, task.Task]{ServerStream: stream})
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type UserService_GetUserTasksServer = grpc.ServerStreamingServer[task.Task]
-
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -326,11 +287,6 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "ListUsers",
 			Handler:       _UserService_ListUsers_Handler,
-			ServerStreams: true,
-		},
-		{
-			StreamName:    "GetUserTasks",
-			Handler:       _UserService_GetUserTasks_Handler,
 			ServerStreams: true,
 		},
 	},

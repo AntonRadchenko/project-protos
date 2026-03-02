@@ -7,7 +7,7 @@
 package user
 
 import (
-	task "github.com/AntonRadchenko/project-protos/proto/task"
+	_ "github.com/AntonRadchenko/project-protos/proto/task"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -277,50 +277,6 @@ func (x *DeleteUserRequest) GetId() uint32 {
 	return 0
 }
 
-type GetUserTasksRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        uint32                 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // Из аргумента userID метода GetTasksForUser
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetUserTasksRequest) Reset() {
-	*x = GetUserTasksRequest{}
-	mi := &file_proto_user_user_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetUserTasksRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetUserTasksRequest) ProtoMessage() {}
-
-func (x *GetUserTasksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetUserTasksRequest.ProtoReflect.Descriptor instead.
-func (*GetUserTasksRequest) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *GetUserTasksRequest) GetUserId() uint32 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 var File_proto_user_user_proto protoreflect.FileDescriptor
 
 const file_proto_user_user_proto_rawDesc = "" +
@@ -341,9 +297,7 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"\x06_emailB\v\n" +
 	"\t_password\"#\n" +
 	"\x11DeleteUserRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\".\n" +
-	"\x13GetUserTasksRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\rR\x06userId2\xcb\x02\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id2\x92\x02\n" +
 	"\vUserService\x121\n" +
 	"\n" +
 	"CreateUser\x12\x17.user.CreateUserRequest\x1a\n" +
@@ -356,9 +310,7 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"UpdateUser\x12\x17.user.UpdateUserRequest\x1a\n" +
 	".user.User\x12=\n" +
 	"\n" +
-	"DeleteUser\x12\x17.user.DeleteUserRequest\x1a\x16.google.protobuf.Empty\x127\n" +
-	"\fGetUserTasks\x12\x19.user.GetUserTasksRequest\x1a\n" +
-	".task.Task0\x01B5Z3github.com/AntonRadchenko/project-protos/proto/userb\x06proto3"
+	"DeleteUser\x12\x17.user.DeleteUserRequest\x1a\x16.google.protobuf.EmptyB5Z3github.com/AntonRadchenko/project-protos/proto/userb\x06proto3"
 
 var (
 	file_proto_user_user_proto_rawDescOnce sync.Once
@@ -372,32 +324,28 @@ func file_proto_user_user_proto_rawDescGZIP() []byte {
 	return file_proto_user_user_proto_rawDescData
 }
 
-var file_proto_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_proto_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_proto_user_user_proto_goTypes = []any{
-	(*User)(nil),                // 0: user.User
-	(*CreateUserRequest)(nil),   // 1: user.CreateUserRequest
-	(*GetUserRequest)(nil),      // 2: user.GetUserRequest
-	(*UpdateUserRequest)(nil),   // 3: user.UpdateUserRequest
-	(*DeleteUserRequest)(nil),   // 4: user.DeleteUserRequest
-	(*GetUserTasksRequest)(nil), // 5: user.GetUserTasksRequest
-	(*emptypb.Empty)(nil),       // 6: google.protobuf.Empty
-	(*task.Task)(nil),           // 7: task.Task
+	(*User)(nil),              // 0: user.User
+	(*CreateUserRequest)(nil), // 1: user.CreateUserRequest
+	(*GetUserRequest)(nil),    // 2: user.GetUserRequest
+	(*UpdateUserRequest)(nil), // 3: user.UpdateUserRequest
+	(*DeleteUserRequest)(nil), // 4: user.DeleteUserRequest
+	(*emptypb.Empty)(nil),     // 5: google.protobuf.Empty
 }
 var file_proto_user_user_proto_depIdxs = []int32{
 	1, // 0: user.UserService.CreateUser:input_type -> user.CreateUserRequest
 	2, // 1: user.UserService.GetUser:input_type -> user.GetUserRequest
-	6, // 2: user.UserService.ListUsers:input_type -> google.protobuf.Empty
+	5, // 2: user.UserService.ListUsers:input_type -> google.protobuf.Empty
 	3, // 3: user.UserService.UpdateUser:input_type -> user.UpdateUserRequest
 	4, // 4: user.UserService.DeleteUser:input_type -> user.DeleteUserRequest
-	5, // 5: user.UserService.GetUserTasks:input_type -> user.GetUserTasksRequest
-	0, // 6: user.UserService.CreateUser:output_type -> user.User
-	0, // 7: user.UserService.GetUser:output_type -> user.User
-	0, // 8: user.UserService.ListUsers:output_type -> user.User
-	0, // 9: user.UserService.UpdateUser:output_type -> user.User
-	6, // 10: user.UserService.DeleteUser:output_type -> google.protobuf.Empty
-	7, // 11: user.UserService.GetUserTasks:output_type -> task.Task
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
+	0, // 5: user.UserService.CreateUser:output_type -> user.User
+	0, // 6: user.UserService.GetUser:output_type -> user.User
+	0, // 7: user.UserService.ListUsers:output_type -> user.User
+	0, // 8: user.UserService.UpdateUser:output_type -> user.User
+	5, // 9: user.UserService.DeleteUser:output_type -> google.protobuf.Empty
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -415,7 +363,7 @@ func file_proto_user_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_user_proto_rawDesc), len(file_proto_user_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

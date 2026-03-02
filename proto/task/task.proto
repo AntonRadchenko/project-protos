@@ -17,6 +17,14 @@ message CreateTaskRequest {
     uint32 user_id = 3;
 }
 
+message GetTaskRequest {
+    uint32 id = 1;
+}
+
+message ListTasksByUserRequest {
+    uint32 user_id = 1;
+}
+
 message UpdateTaskRequest {
     uint32 id = 1;
     optional string task = 2;
@@ -33,8 +41,12 @@ message DeleteTaskRequest {
 service TaskService {
     // CreateTask(params CreateTaskParams) (*Task, error)
     rpc CreateTask(CreateTaskRequest) returns (Task);
-    // GetTasks() ([]Task, error)
+    // GetTask(id uint) (*Task, error)
+    rpc GetTask(GetTaskRequest) returns (Task);
+    // ListTasks() ([]Task, error)
     rpc ListTasks(google.protobuf.Empty) returns (stream Task);
+    // ListTasksByUser(user_id uint) ([]Task, error)
+    rpc ListTasksByUser(ListTasksByUserRequest) returns (stream Task);  // ← добавить
     // UpdateTask(id uint, params UpdateTaskParams) (*Task, error)
     rpc UpdateTask(UpdateTaskRequest) returns (Task);
     // DeleteTask(id uint) error
