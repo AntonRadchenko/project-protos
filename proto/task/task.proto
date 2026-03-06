@@ -21,6 +21,10 @@ message GetTaskRequest {
     uint32 id = 1;
 }
 
+message TaskList {
+    repeated Task tasks = 1;
+}
+
 message ListTasksByUserRequest {
     uint32 user_id = 1;
 }
@@ -44,9 +48,9 @@ service TaskService {
     // GetTask(id uint) (*Task, error)
     rpc GetTask(GetTaskRequest) returns (Task);
     // ListTasks() ([]Task, error)
-    rpc ListTasks(google.protobuf.Empty) returns (stream Task);
+    rpc ListTasks(google.protobuf.Empty) returns (TaskList);
     // ListTasksByUser(user_id uint) ([]Task, error)
-    rpc ListTasksByUser(ListTasksByUserRequest) returns (stream Task);  // ← добавить
+    rpc ListTasksByUser(ListTasksByUserRequest) returns (TaskList);  // ← добавить
     // UpdateTask(id uint, params UpdateTaskParams) (*Task, error)
     rpc UpdateTask(UpdateTaskRequest) returns (Task);
     // DeleteTask(id uint) error

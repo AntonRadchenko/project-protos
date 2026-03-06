@@ -40,9 +40,9 @@ type TaskServiceClient interface {
 	// GetTask(id uint) (*Task, error)
 	GetTask(ctx context.Context, in *GetTaskRequest, opts ...grpc.CallOption) (*Task, error)
 	// ListTasks() ([]Task, error)
-	ListTasks(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Task], error)
+	ListTasks(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TaskList, error)
 	// ListTasksByUser(user_id uint) ([]Task, error)
-	ListTasksByUser(ctx context.Context, in *ListTasksByUserRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Task], error)
+	ListTasksByUser(ctx context.Context, in *ListTasksByUserRequest, opts ...grpc.CallOption) (*TaskList, error)
 	// UpdateTask(id uint, params UpdateTaskParams) (*Task, error)
 	UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*Task, error)
 	// DeleteTask(id uint) error
@@ -77,43 +77,25 @@ func (c *taskServiceClient) GetTask(ctx context.Context, in *GetTaskRequest, opt
 	return out, nil
 }
 
-func (c *taskServiceClient) ListTasks(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Task], error) {
+func (c *taskServiceClient) ListTasks(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TaskList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &TaskService_ServiceDesc.Streams[0], TaskService_ListTasks_FullMethodName, cOpts...)
+	out := new(TaskList)
+	err := c.cc.Invoke(ctx, TaskService_ListTasks_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[emptypb.Empty, Task]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
+	return out, nil
 }
 
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type TaskService_ListTasksClient = grpc.ServerStreamingClient[Task]
-
-func (c *taskServiceClient) ListTasksByUser(ctx context.Context, in *ListTasksByUserRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Task], error) {
+func (c *taskServiceClient) ListTasksByUser(ctx context.Context, in *ListTasksByUserRequest, opts ...grpc.CallOption) (*TaskList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &TaskService_ServiceDesc.Streams[1], TaskService_ListTasksByUser_FullMethodName, cOpts...)
+	out := new(TaskList)
+	err := c.cc.Invoke(ctx, TaskService_ListTasksByUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[ListTasksByUserRequest, Task]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
+	return out, nil
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type TaskService_ListTasksByUserClient = grpc.ServerStreamingClient[Task]
 
 func (c *taskServiceClient) UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*Task, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -147,9 +129,9 @@ type TaskServiceServer interface {
 	// GetTask(id uint) (*Task, error)
 	GetTask(context.Context, *GetTaskRequest) (*Task, error)
 	// ListTasks() ([]Task, error)
-	ListTasks(*emptypb.Empty, grpc.ServerStreamingServer[Task]) error
+	ListTasks(context.Context, *emptypb.Empty) (*TaskList, error)
 	// ListTasksByUser(user_id uint) ([]Task, error)
-	ListTasksByUser(*ListTasksByUserRequest, grpc.ServerStreamingServer[Task]) error
+	ListTasksByUser(context.Context, *ListTasksByUserRequest) (*TaskList, error)
 	// UpdateTask(id uint, params UpdateTaskParams) (*Task, error)
 	UpdateTask(context.Context, *UpdateTaskRequest) (*Task, error)
 	// DeleteTask(id uint) error
@@ -170,11 +152,11 @@ func (UnimplementedTaskServiceServer) CreateTask(context.Context, *CreateTaskReq
 func (UnimplementedTaskServiceServer) GetTask(context.Context, *GetTaskRequest) (*Task, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTask not implemented")
 }
-func (UnimplementedTaskServiceServer) ListTasks(*emptypb.Empty, grpc.ServerStreamingServer[Task]) error {
-	return status.Error(codes.Unimplemented, "method ListTasks not implemented")
+func (UnimplementedTaskServiceServer) ListTasks(context.Context, *emptypb.Empty) (*TaskList, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTasks not implemented")
 }
-func (UnimplementedTaskServiceServer) ListTasksByUser(*ListTasksByUserRequest, grpc.ServerStreamingServer[Task]) error {
-	return status.Error(codes.Unimplemented, "method ListTasksByUser not implemented")
+func (UnimplementedTaskServiceServer) ListTasksByUser(context.Context, *ListTasksByUserRequest) (*TaskList, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTasksByUser not implemented")
 }
 func (UnimplementedTaskServiceServer) UpdateTask(context.Context, *UpdateTaskRequest) (*Task, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTask not implemented")
@@ -239,27 +221,41 @@ func _TaskService_GetTask_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TaskService_ListTasks_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(emptypb.Empty)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _TaskService_ListTasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(TaskServiceServer).ListTasks(m, &grpc.GenericServerStream[emptypb.Empty, Task]{ServerStream: stream})
+	if interceptor == nil {
+		return srv.(TaskServiceServer).ListTasks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TaskService_ListTasks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).ListTasks(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type TaskService_ListTasksServer = grpc.ServerStreamingServer[Task]
-
-func _TaskService_ListTasksByUser_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ListTasksByUserRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _TaskService_ListTasksByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTasksByUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(TaskServiceServer).ListTasksByUser(m, &grpc.GenericServerStream[ListTasksByUserRequest, Task]{ServerStream: stream})
+	if interceptor == nil {
+		return srv.(TaskServiceServer).ListTasksByUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TaskService_ListTasksByUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).ListTasksByUser(ctx, req.(*ListTasksByUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type TaskService_ListTasksByUserServer = grpc.ServerStreamingServer[Task]
 
 func _TaskService_UpdateTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateTaskRequest)
@@ -313,6 +309,14 @@ var TaskService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TaskService_GetTask_Handler,
 		},
 		{
+			MethodName: "ListTasks",
+			Handler:    _TaskService_ListTasks_Handler,
+		},
+		{
+			MethodName: "ListTasksByUser",
+			Handler:    _TaskService_ListTasksByUser_Handler,
+		},
+		{
 			MethodName: "UpdateTask",
 			Handler:    _TaskService_UpdateTask_Handler,
 		},
@@ -321,17 +325,6 @@ var TaskService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TaskService_DeleteTask_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "ListTasks",
-			Handler:       _TaskService_ListTasks_Handler,
-			ServerStreams: true,
-		},
-		{
-			StreamName:    "ListTasksByUser",
-			Handler:       _TaskService_ListTasksByUser_Handler,
-			ServerStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/task/task.proto",
 }

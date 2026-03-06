@@ -194,6 +194,50 @@ func (x *GetTaskRequest) GetId() uint32 {
 	return 0
 }
 
+type TaskList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tasks         []*Task                `protobuf:"bytes,1,rep,name=tasks,proto3" json:"tasks,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TaskList) Reset() {
+	*x = TaskList{}
+	mi := &file_proto_task_task_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TaskList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TaskList) ProtoMessage() {}
+
+func (x *TaskList) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_task_task_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TaskList.ProtoReflect.Descriptor instead.
+func (*TaskList) Descriptor() ([]byte, []int) {
+	return file_proto_task_task_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *TaskList) GetTasks() []*Task {
+	if x != nil {
+		return x.Tasks
+	}
+	return nil
+}
+
 type ListTasksByUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        uint32                 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -203,7 +247,7 @@ type ListTasksByUserRequest struct {
 
 func (x *ListTasksByUserRequest) Reset() {
 	*x = ListTasksByUserRequest{}
-	mi := &file_proto_task_task_proto_msgTypes[3]
+	mi := &file_proto_task_task_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -215,7 +259,7 @@ func (x *ListTasksByUserRequest) String() string {
 func (*ListTasksByUserRequest) ProtoMessage() {}
 
 func (x *ListTasksByUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_task_task_proto_msgTypes[3]
+	mi := &file_proto_task_task_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -228,7 +272,7 @@ func (x *ListTasksByUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTasksByUserRequest.ProtoReflect.Descriptor instead.
 func (*ListTasksByUserRequest) Descriptor() ([]byte, []int) {
-	return file_proto_task_task_proto_rawDescGZIP(), []int{3}
+	return file_proto_task_task_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ListTasksByUserRequest) GetUserId() uint32 {
@@ -250,7 +294,7 @@ type UpdateTaskRequest struct {
 
 func (x *UpdateTaskRequest) Reset() {
 	*x = UpdateTaskRequest{}
-	mi := &file_proto_task_task_proto_msgTypes[4]
+	mi := &file_proto_task_task_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -262,7 +306,7 @@ func (x *UpdateTaskRequest) String() string {
 func (*UpdateTaskRequest) ProtoMessage() {}
 
 func (x *UpdateTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_task_task_proto_msgTypes[4]
+	mi := &file_proto_task_task_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -275,7 +319,7 @@ func (x *UpdateTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTaskRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTaskRequest) Descriptor() ([]byte, []int) {
-	return file_proto_task_task_proto_rawDescGZIP(), []int{4}
+	return file_proto_task_task_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpdateTaskRequest) GetId() uint32 {
@@ -315,7 +359,7 @@ type DeleteTaskRequest struct {
 
 func (x *DeleteTaskRequest) Reset() {
 	*x = DeleteTaskRequest{}
-	mi := &file_proto_task_task_proto_msgTypes[5]
+	mi := &file_proto_task_task_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -327,7 +371,7 @@ func (x *DeleteTaskRequest) String() string {
 func (*DeleteTaskRequest) ProtoMessage() {}
 
 func (x *DeleteTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_task_task_proto_msgTypes[5]
+	mi := &file_proto_task_task_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -340,7 +384,7 @@ func (x *DeleteTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTaskRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTaskRequest) Descriptor() ([]byte, []int) {
-	return file_proto_task_task_proto_rawDescGZIP(), []int{5}
+	return file_proto_task_task_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DeleteTaskRequest) GetId() uint32 {
@@ -369,7 +413,10 @@ const file_proto_task_task_proto_rawDesc = "" +
 	"\n" +
 	"\b_is_done\" \n" +
 	"\x0eGetTaskRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\"1\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id\",\n" +
+	"\bTaskList\x12 \n" +
+	"\x05tasks\x18\x01 \x03(\v2\n" +
+	".task.TaskR\x05tasks\"1\n" +
 	"\x16ListTasksByUserRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\rR\x06userId\"\x99\x01\n" +
 	"\x11UpdateTaskRequest\x12\x0e\n" +
@@ -383,17 +430,15 @@ const file_proto_task_task_proto_rawDesc = "" +
 	"\n" +
 	"\b_user_id\"#\n" +
 	"\x11DeleteTaskRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id2\xd1\x02\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id2\xd5\x02\n" +
 	"\vTaskService\x121\n" +
 	"\n" +
 	"CreateTask\x12\x17.task.CreateTaskRequest\x1a\n" +
 	".task.Task\x12+\n" +
 	"\aGetTask\x12\x14.task.GetTaskRequest\x1a\n" +
-	".task.Task\x121\n" +
-	"\tListTasks\x12\x16.google.protobuf.Empty\x1a\n" +
-	".task.Task0\x01\x12=\n" +
-	"\x0fListTasksByUser\x12\x1c.task.ListTasksByUserRequest\x1a\n" +
-	".task.Task0\x01\x121\n" +
+	".task.Task\x123\n" +
+	"\tListTasks\x12\x16.google.protobuf.Empty\x1a\x0e.task.TaskList\x12?\n" +
+	"\x0fListTasksByUser\x12\x1c.task.ListTasksByUserRequest\x1a\x0e.task.TaskList\x121\n" +
 	"\n" +
 	"UpdateTask\x12\x17.task.UpdateTaskRequest\x1a\n" +
 	".task.Task\x12=\n" +
@@ -412,34 +457,36 @@ func file_proto_task_task_proto_rawDescGZIP() []byte {
 	return file_proto_task_task_proto_rawDescData
 }
 
-var file_proto_task_task_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_proto_task_task_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_proto_task_task_proto_goTypes = []any{
 	(*Task)(nil),                   // 0: task.Task
 	(*CreateTaskRequest)(nil),      // 1: task.CreateTaskRequest
 	(*GetTaskRequest)(nil),         // 2: task.GetTaskRequest
-	(*ListTasksByUserRequest)(nil), // 3: task.ListTasksByUserRequest
-	(*UpdateTaskRequest)(nil),      // 4: task.UpdateTaskRequest
-	(*DeleteTaskRequest)(nil),      // 5: task.DeleteTaskRequest
-	(*emptypb.Empty)(nil),          // 6: google.protobuf.Empty
+	(*TaskList)(nil),               // 3: task.TaskList
+	(*ListTasksByUserRequest)(nil), // 4: task.ListTasksByUserRequest
+	(*UpdateTaskRequest)(nil),      // 5: task.UpdateTaskRequest
+	(*DeleteTaskRequest)(nil),      // 6: task.DeleteTaskRequest
+	(*emptypb.Empty)(nil),          // 7: google.protobuf.Empty
 }
 var file_proto_task_task_proto_depIdxs = []int32{
-	1, // 0: task.TaskService.CreateTask:input_type -> task.CreateTaskRequest
-	2, // 1: task.TaskService.GetTask:input_type -> task.GetTaskRequest
-	6, // 2: task.TaskService.ListTasks:input_type -> google.protobuf.Empty
-	3, // 3: task.TaskService.ListTasksByUser:input_type -> task.ListTasksByUserRequest
-	4, // 4: task.TaskService.UpdateTask:input_type -> task.UpdateTaskRequest
-	5, // 5: task.TaskService.DeleteTask:input_type -> task.DeleteTaskRequest
-	0, // 6: task.TaskService.CreateTask:output_type -> task.Task
-	0, // 7: task.TaskService.GetTask:output_type -> task.Task
-	0, // 8: task.TaskService.ListTasks:output_type -> task.Task
-	0, // 9: task.TaskService.ListTasksByUser:output_type -> task.Task
-	0, // 10: task.TaskService.UpdateTask:output_type -> task.Task
-	6, // 11: task.TaskService.DeleteTask:output_type -> google.protobuf.Empty
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: task.TaskList.tasks:type_name -> task.Task
+	1, // 1: task.TaskService.CreateTask:input_type -> task.CreateTaskRequest
+	2, // 2: task.TaskService.GetTask:input_type -> task.GetTaskRequest
+	7, // 3: task.TaskService.ListTasks:input_type -> google.protobuf.Empty
+	4, // 4: task.TaskService.ListTasksByUser:input_type -> task.ListTasksByUserRequest
+	5, // 5: task.TaskService.UpdateTask:input_type -> task.UpdateTaskRequest
+	6, // 6: task.TaskService.DeleteTask:input_type -> task.DeleteTaskRequest
+	0, // 7: task.TaskService.CreateTask:output_type -> task.Task
+	0, // 8: task.TaskService.GetTask:output_type -> task.Task
+	3, // 9: task.TaskService.ListTasks:output_type -> task.TaskList
+	3, // 10: task.TaskService.ListTasksByUser:output_type -> task.TaskList
+	0, // 11: task.TaskService.UpdateTask:output_type -> task.Task
+	7, // 12: task.TaskService.DeleteTask:output_type -> google.protobuf.Empty
+	7, // [7:13] is the sub-list for method output_type
+	1, // [1:7] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_proto_task_task_proto_init() }
@@ -449,14 +496,14 @@ func file_proto_task_task_proto_init() {
 	}
 	file_proto_task_task_proto_msgTypes[0].OneofWrappers = []any{}
 	file_proto_task_task_proto_msgTypes[1].OneofWrappers = []any{}
-	file_proto_task_task_proto_msgTypes[4].OneofWrappers = []any{}
+	file_proto_task_task_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_task_task_proto_rawDesc), len(file_proto_task_task_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
