@@ -20,6 +20,10 @@ message GetUserRequest {
   uint32 id = 1;
 }
 
+message UserList {
+  repeated User users = 1;
+}
+
 message UpdateUserRequest {
   uint32 id = 1;          
   // optional - вместо указателей       
@@ -36,12 +40,11 @@ service UserService {
   // CreateUser(CreateUserParams) (*User, error)
   rpc CreateUser(CreateUserRequest) returns (User);
 
-  // GetUser(id uint) (*User, error)  ← ЭТО НОВЫЙ
+  // GetUser(id uint) (*User, error)
   rpc GetUser(GetUserRequest) returns (User);
   
-  // GetUsers() ([]User, error) 
-  // stream User = массив/список    
-  rpc ListUsers(google.protobuf.Empty) returns (stream User);
+  // ListUsers() ([]User, error)    
+  rpc ListUsers(google.protobuf.Empty) returns (UserList);
   
   // UpdateUser(id uint, params UpdateUserParams) (*User, error)
   rpc UpdateUser(UpdateUserRequest) returns (User);
@@ -49,3 +52,4 @@ service UserService {
   // DeleteUser(id uint) error
   rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
 }
+

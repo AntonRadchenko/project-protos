@@ -35,11 +35,10 @@ const (
 type UserServiceClient interface {
 	// CreateUser(CreateUserParams) (*User, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
-	// GetUser(id uint) (*User, error)  ← ЭТО НОВЫЙ
+	// GetUser(id uint) (*User, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
-	// GetUsers() ([]User, error)
-	// stream User = массив/список
-	ListUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[User], error)
+	// ListUsers() ([]User, error)
+	ListUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserList, error)
 	// UpdateUser(id uint, params UpdateUserParams) (*User, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
 	// DeleteUser(id uint) error
@@ -74,24 +73,15 @@ func (c *userServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opt
 	return out, nil
 }
 
-func (c *userServiceClient) ListUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[User], error) {
+func (c *userServiceClient) ListUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[0], UserService_ListUsers_FullMethodName, cOpts...)
+	out := new(UserList)
+	err := c.cc.Invoke(ctx, UserService_ListUsers_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[emptypb.Empty, User]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
+	return out, nil
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type UserService_ListUsersClient = grpc.ServerStreamingClient[User]
 
 func (c *userServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -121,11 +111,10 @@ func (c *userServiceClient) DeleteUser(ctx context.Context, in *DeleteUserReques
 type UserServiceServer interface {
 	// CreateUser(CreateUserParams) (*User, error)
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
-	// GetUser(id uint) (*User, error)  ← ЭТО НОВЫЙ
+	// GetUser(id uint) (*User, error)
 	GetUser(context.Context, *GetUserRequest) (*User, error)
-	// GetUsers() ([]User, error)
-	// stream User = массив/список
-	ListUsers(*emptypb.Empty, grpc.ServerStreamingServer[User]) error
+	// ListUsers() ([]User, error)
+	ListUsers(context.Context, *emptypb.Empty) (*UserList, error)
 	// UpdateUser(id uint, params UpdateUserParams) (*User, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
 	// DeleteUser(id uint) error
@@ -146,8 +135,8 @@ func (UnimplementedUserServiceServer) CreateUser(context.Context, *CreateUserReq
 func (UnimplementedUserServiceServer) GetUser(context.Context, *GetUserRequest) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUser not implemented")
 }
-func (UnimplementedUserServiceServer) ListUsers(*emptypb.Empty, grpc.ServerStreamingServer[User]) error {
-	return status.Error(codes.Unimplemented, "method ListUsers not implemented")
+func (UnimplementedUserServiceServer) ListUsers(context.Context, *emptypb.Empty) (*UserList, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListUsers not implemented")
 }
 func (UnimplementedUserServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUser not implemented")
@@ -212,16 +201,23 @@ func _UserService_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_ListUsers_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(emptypb.Empty)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _UserService_ListUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(UserServiceServer).ListUsers(m, &grpc.GenericServerStream[emptypb.Empty, User]{ServerStream: stream})
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListUsers(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type UserService_ListUsersServer = grpc.ServerStreamingServer[User]
 
 func _UserService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserRequest)
@@ -275,6 +271,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_GetUser_Handler,
 		},
 		{
+			MethodName: "ListUsers",
+			Handler:    _UserService_ListUsers_Handler,
+		},
+		{
 			MethodName: "UpdateUser",
 			Handler:    _UserService_UpdateUser_Handler,
 		},
@@ -283,12 +283,6 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_DeleteUser_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "ListUsers",
-			Handler:       _UserService_ListUsers_Handler,
-			ServerStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/user/user.proto",
 }
